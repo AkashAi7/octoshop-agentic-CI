@@ -1,0 +1,13 @@
+{
+  "name": "octoshop-agentic-workflows",
+  "private": true,
+  "version": "1.0.0",
+  "description": "OctoShop E-Commerce Storefront — Getting Started Demo & Hands-On Lab for GitHub Agentic Workflows (gh-aw)",
+  "type": "module",
+  "scripts": {
+    "start": "node src/server.mjs",
+    "test": "node --test test/checkout.test.mjs",
+    "validate": "node scripts/validate-workflows.mjs",
+    "verify": "npm test && npm run validate"
+  }
+}

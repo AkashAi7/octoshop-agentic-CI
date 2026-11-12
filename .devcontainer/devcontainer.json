@@ -1,0 +1,15 @@
+{
+  "name": "OctoShop — GitHub Agentic Workflows Lab",
+  "image": "mcr.microsoft.com/devcontainers/javascript-node:1-22-bookworm",
+  "features": {
+    "ghcr.io/devcontainers/features/github-cli:1": {}
+  },
+  "forwardPorts": [3000],
+  "portsAttributes": {
+    "3000": {
+      "label": "OctoShop Storefront",
+      "onAutoForward": "notify"
+    }
+  },
+  "postCreateCommand": "curl -sL https://raw.githubusercontent.com/github/gh-aw/main/install-gh-aw.sh | bash && npm run verify"
+}

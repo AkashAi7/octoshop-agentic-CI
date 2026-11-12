@@ -1,0 +1,43 @@
+name: E-Commerce CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    types: [opened, synchronize, reopened]
+  workflow_dispatch:
+    inputs:
+      simulate_checkout_bug:
+        description: "Fail checkout test on purpose to trigger Lab 2 CI Failure Explainer"
+        required: false
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+jobs:
+  storefront-checks:
+    name: Checkout Unit Tests & Workflow Guardrails
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Run OctoShop cart & checkout tests
+        env:
+          SIMULATE_CHECKOUT_BUG: ${{ inputs.simulate_checkout_bug }}
+        run: |
+          if [ "$SIMULATE_CHECKOUT_BUG" = "true" ]; then
+            echo "AssertionError: SAVE20 discount allowed negative cart total (-$4.20) in src/checkout.mjs:68"
+            exit 1
+          fi
+          npm test
+
+      - name: Validate Agentic Workflow (.md) guardrails
+        run: npm run validate

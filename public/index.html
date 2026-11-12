@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>OctoShop — Developer Gear &amp; Merch</title>
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <div class="promo-strip" role="region" aria-label="Store promotion banner">
+      Free shipping on orders $100+ · Try promo codes <code>SAVE20</code> ($50+ min), <code>WELCOME10</code>, or <code>FREESHIP</code>
+    </div>
+
+    <header class="site-header">
+      <div class="header-inner">
+        <div>
+          <span class="brand-name">OctoShop</span>
+          <span class="brand-tagline">Developer Gear Storefront · Agentic Workflows Sample Repo</span>
+        </div>
+
+        <div class="filter-bar" role="group" aria-label="Filter products by category">
+          <button type="button" class="filter-btn active" data-category="ALL">All Products</button>
+          <button type="button" class="filter-btn" data-category="Hardware">Hardware</button>
+          <button type="button" class="filter-btn" data-category="Apparel">Apparel</button>
+          <button type="button" class="filter-btn" data-category="Accessories">Accessories</button>
+        </div>
+      </div>
+    </header>
+
+    <main class="store-layout">
+      <section aria-labelledby="catalog-heading">
+        <div class="section-bar">
+          <h1 id="catalog-heading">Featured Developer Gear</h1>
+          <span id="product-count" class="muted-meta">Loading catalog…</span>
+        </div>
+
+        <div id="product-grid" class="product-grid" role="list"></div>
+      </section>
+
+      <aside class="cart-panel" aria-labelledby="cart-heading">
+        <div class="section-bar">
+          <h2 id="cart-heading">Your Cart</h2>
+          <span id="cart-count-pill" class="count-pill">0 items</span>
+        </div>
+
+        <div id="cart-empty" class="empty-cart">
+          Your cart is empty. Add an item from the catalog to test pricing, shipping thresholds, and promo codes.
+        </div>
+
+        <ul id="cart-items" class="cart-list" hidden></ul>
+
+        <form id="promo-form" class="promo-form">
+          <label for="promo-input">Promo code</label>
+          <div class="promo-input-row">
+            <input id="promo-input" type="text" placeholder="e.g. SAVE20" autocomplete="off" />
+            <button type="submit" class="btn-secondary">Apply</button>
+          </div>
+          <p id="promo-feedback" class="promo-feedback" role="status" aria-live="polite"></p>
+        </form>
+
+        <dl class="totals-list">
+          <div>
+            <dt>Subtotal</dt>
+            <dd id="val-subtotal">$0.00</dd>
+          </div>
+          <div>
+            <dt>Discount</dt>
+            <dd id="val-discount">-$0.00</dd>
+          </div>
+          <div>
+            <dt>Shipping</dt>
+            <dd id="val-shipping">$0.00</dd>
+          </div>
+          <div>
+            <dt>Estimated Tax (8%)</dt>
+            <dd id="val-tax">$0.00</dd>
+          </div>
+          <div class="total-row">
+            <dt>Total</dt>
+            <dd id="val-total">$0.00</dd>
+          </div>
+        </dl>
+
+        <button id="checkout-btn" type="button" class="btn-primary full-width" disabled>
+          Place Demo Order
+        </button>
+
+        <div id="order-status" class="order-status" role="status" aria-live="polite" hidden></div>
+      </aside>
+    </main>
+
+    <script type="module" src="/app.js"></script>
+  </body>
+</html>
