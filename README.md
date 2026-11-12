@@ -4,6 +4,15 @@ A zero-dependency **e-commerce storefront** (`OctoShop`) built so anyone can imm
 
 ---
 
+## How It Fits Together
+
+```mermaid
+flowchart LR
+    Code["OctoShop Storefront\n(Catalog, Cart & Promo Math)"] --> CI["E-Commerce CI (.yml)\nDeterministic Unit Tests"]
+    Code --> AW["Agentic Workflow (.md -> .lock.yml)\nRead-Only Copilot Agent"]
+    AW -->|"Structured JSON Intent"| SO["Safe Outputs Job\nScoped GitHub Issue / PR Comment"]
+```
+
 ## Session Flow
 
 | Step | Module | What's Inside |
@@ -34,19 +43,18 @@ npm start
 gh extension install github/gh-aw
 gh aw version
 
-# 2. (Optional) Seed realistic OctoShop checkout/cart issues & blockers into your GitHub repo
-./scripts/seed-demo-repo.sh --repo "<owner>/<repo>"
-# PowerShell: ./scripts/seed-demo-repo.ps1 -Repo "<owner>/<repo>"
+# 2. Configure Copilot authentication (Fine-grained PAT with Account -> Copilot Requests: Read)
+gh secret set COPILOT_GITHUB_TOKEN < token.txt
 
-# 3. Compile daily-repo-status.md -> daily-repo-status.lock.yml
-gh aw compile daily-repo-status
-
-# 4. Commit both .md and .lock.yml, push, and trigger a run!
-git add .gitattributes .github/workflows/daily-repo-status.md .github/workflows/daily-repo-status.lock.yml
-git commit -m "Add OctoShop daily-repo-status agentic workflow"
-git push
+# 3. Trigger the pre-compiled Daily Repo Status workflow right away!
 gh aw run daily-repo-status
 gh run watch
+
+# 4. Whenever you edit daily-repo-status.md, re-compile and push both .md and .lock.yml:
+gh aw compile daily-repo-status
+git add .gitattributes .github/aw/actions-lock.json .github/workflows/daily-repo-status.*
+git commit -m "Update OctoShop daily-repo-status workflow"
+git push
 ```
 
 ---

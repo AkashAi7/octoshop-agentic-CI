@@ -38,7 +38,7 @@ cp lab-2/starter-workflows/ci-failure-explainer.md .github/workflows/ci-failure-
 ```
 *(Or on PowerShell: `Copy-Item lab-2/starter-workflows/ci-failure-explainer.md .github/workflows/ci-failure-explainer.md`)*
 
-> **Using your own repo?** Open `.github/workflows/ci-failure-explainer.md` and change `workflows: ["E-Commerce CI"]` on line 9 to match the `name:` at the top of your own `.github/workflows/*.yml` file. Also add `.github/workflows/*.lock.yml linguist-generated=true` to `.gitattributes`.
+> **Using your own repo?** Open `.github/workflows/ci-failure-explainer.md` and update `workflows: ["E-Commerce CI"]` and `branches: [main]` under `on.workflow_run` to match your workflow's `name:` and default branch. Also add `.github/workflows/*.lock.yml linguist-generated=true` to `.gitattributes`.
 
 ### Step 2 — Inspect `staged: true` & Customize the Prompt
 Open `.github/workflows/ci-failure-explainer.md`:
@@ -53,8 +53,8 @@ npm run verify
 # Compile .md -> .lock.yml
 gh aw compile ci-failure-explainer
 
-# Commit BOTH the .md file and the generated .lock.yml file
-git add .gitattributes .github/workflows/ci-failure-explainer.md .github/workflows/ci-failure-explainer.lock.yml
+# Commit the .md file, generated .lock.yml, and action pin lockfile
+git add .gitattributes .github/aw/actions-lock.json .github/workflows/ci-failure-explainer.*
 git commit -m "Add OctoShop ci-failure-explainer agentic workflow"
 git push
 ```
