@@ -58,6 +58,15 @@ export const PRODUCTS = Object.freeze([
 		badge: null,
 		description: '900x400mm merino wool felt surface with non-slip cork base.',
 	},
+	{
+		id: 'cable-aviator',
+		name: 'Coiled USB-C Aviator Keyboard Cable',
+		category: 'Accessories',
+		priceCents: 3600,
+		stock: 24,
+		badge: 'New',
+		description: 'Double-sleeved braided cable with quick-disconnect metal aviator connector.',
+	},
 ]);
 
 export const PROMO_CODES = Object.freeze({
