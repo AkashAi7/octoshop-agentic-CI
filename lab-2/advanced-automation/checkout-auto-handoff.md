@@ -43,8 +43,8 @@ steps:
         echo ""
         echo "=== OCTOSHOP CHECKOUT TEST OUTPUT ==="
         if [ "$SIMULATE_FAILURE" = "true" ]; then
-          echo "not ok 3 - applies SAVE20 promo code when subtotal is at least $50.00"
-          echo "  AssertionError: Expected discountCents 1360, got 0 when promoCode passed in lowercase ('save20') at src/checkout.mjs:61"
+          echo 'not ok 3 - applies SAVE20 promo code when subtotal is at least $50.00'
+          echo '  AssertionError: Expected discountCents 1360, got 0 when promoCode passed in lowercase ("save20") at src/checkout.mjs:61'
         else
           npm test 2>&1
         fi

@@ -8,9 +8,9 @@ A zero-dependency **e-commerce storefront** (`OctoShop`) built so anyone can imm
 
 ```mermaid
 flowchart LR
-    Code["OctoShop Storefront\n(Catalog, Cart & Promo Math)"] --> CI["E-Commerce CI (.yml)\nDeterministic Unit Tests"]
-    Code --> AW["Agentic Workflow (.md -> .lock.yml)\nRead-Only Copilot Agent"]
-    AW -->|"Structured JSON Intent"| SO["Safe Outputs Job\nScoped GitHub Issue / PR Comment"]
+    Code["OctoShop Storefront (Catalog, Cart & Promo Math)"] --> CI["E-Commerce CI (.yml) — Deterministic Unit Tests"]
+    Code --> AW["Agentic Workflow (.md -> .lock.yml) — Read-Only Copilot Agent"]
+    AW -->|"Structured JSON Intent"| SO["Safe Outputs Job — Scoped GitHub Issue / PR Comment"]
 ```
 
 ## Session Flow
