@@ -15,16 +15,25 @@ flowchart LR
 
 ## Session Flow
 
-| Step | Module | What's Inside |
+| Part | Guide | What You Will Do |
 |---|---|---|
-| **1. Demo** | **[Daily Repo Status Report](demo/README.md)** | Live walkthrough of [`.github/workflows/daily-repo-status.md`](.github/workflows/daily-repo-status.md) — summarises **open storefront issues, PRs, recent merges, and flash-sale checkout blockers** into a GitHub Issue alongside [`.github/workflows/ci.yml`](.github/workflows/ci.yml) (`E-Commerce CI`). |
-| **2. Lab 2** | **[Lab 2: Experiment Against Your Workflow](lab-2/README.md)** | **Path 1**: Pair one starter Agentic Workflow (`ci-failure-explainer.md`, `checkout-pr-review.md`, or `storefront-issue-triage.md`) against `E-Commerce CI` (or your own repo's workflow).<br>**Path 2**: Build a multi-step Copilot Automation (`checkout-auto-handoff.md`) that hands off self-contained checkout bugs to `@copilot`. |
+| **1. Live Demo** | **[Daily Repo Status Report](demo/README.md)** | Walk through [`.github/workflows/daily-repo-status.md`](.github/workflows/daily-repo-status.md) and watch it summarise **open storefront issues, PRs, recent merges, and checkout blockers** into one GitHub Issue alongside [`.github/workflows/ci.yml`](.github/workflows/ci.yml) (`E-Commerce CI`). |
+| **2. Hands-On Lab** | **[Lab 2: Try One Against Your Workflow](lab-2/README.md)** | **Path 1 (15–20 min)**: Pair a starter Agentic Workflow (`ci-failure-explainer.md`, `checkout-pr-review.md`, or `storefront-issue-triage.md`) against `E-Commerce CI` or your own repo's workflow.<br>**Path 2 (25–30 min)**: Build a multi-step Copilot Automation (`checkout-auto-handoff.md`) that hands off checkout bugs to `@copilot`. |
 
 ---
 
-## Quick Start
+## Step-by-Step Quick Start
 
-### Try the OctoShop Storefront & Tests Locally (Zero `npm install` Needed!)
+### Step 1 — Open the Repo (Codespaces or Local)
+
+- **Fastest (Zero Setup)**: Click **Code → Codespaces → Create codespace on main** (`gh` and `gh-aw` are pre-installed automatically).
+- **Local (Linux, macOS, or Windows WSL)**: Clone the repo and install the `gh-aw` CLI extension:
+  ```bash
+  gh extension install github/gh-aw
+  gh aw version
+  ```
+
+### Step 2 — Explore OctoShop & Run Tests (No `npm install` Needed)
 
 ```bash
 # Run cart, promo-code & stock unit tests + validate all Agentic Workflow (.md) files
@@ -34,28 +43,36 @@ npm run verify
 npm start
 ```
 
-### Compile & Run the Getting-Started Agentic Workflow (`gh-aw`)
+### Step 3 — One-Time GitHub Actions Setup (On Your Fork / Repo)
 
-> **Tip**: Open this repo in **GitHub Codespaces** (`.devcontainer` pre-installs `gh` + `gh-aw`), or run locally on Linux, macOS, or Windows WSL.
+1. **Enable Actions (if working on a fork)**: Open your fork's **Actions** tab on GitHub and click **"I understand my workflows, go ahead and enable them"**.
+2. **Add your Copilot token secret**:
+   - Create a [Fine-Grained Personal Access Token](https://github.com/settings/personal-access-tokens/new) with **Resource owner = your user account** and **Account permissions → Copilot Requests: Read-only** *(no repo scopes needed)*.
+   - Save it as `COPILOT_GITHUB_TOKEN` (paste when prompted):
+     ```bash
+     gh secret set COPILOT_GITHUB_TOKEN
+     ```
+     *(Using a GitHub Organization with centralized Copilot billing instead? Run `gh aw add-wizard` to use `copilot-requests: write` without a PAT.)*
+
+### Step 4 — Run (or Customize) the Getting-Started Workflow
 
 ```bash
-# 1. Install the GitHub Agentic Workflows CLI extension
-gh extension install github/gh-aw
-gh aw version
-
-# 2. Configure Copilot authentication (Fine-grained PAT with Account -> Copilot Requests: Read)
-gh secret set COPILOT_GITHUB_TOKEN < token.txt
-
-# 3. Trigger the pre-compiled Daily Repo Status workflow right away!
+# Trigger the pre-compiled Daily Repo Status workflow right away
 gh aw run daily-repo-status
 gh run watch
 
-# 4. Whenever you edit daily-repo-status.md, re-compile and push both .md and .lock.yml:
+# Whenever you edit .github/workflows/daily-repo-status.md, re-compile & push:
 gh aw compile daily-repo-status
-git add .gitattributes .github/aw/actions-lock.json .github/workflows/daily-repo-status.*
+git add .gitattributes .github/aw/ .github/workflows/
 git commit -m "Update OctoShop daily-repo-status workflow"
 git push
 ```
+
+> **Starting from an empty repo?** Seed OctoShop labels and sample checkout/cart issues in one command:
+> ```bash
+> ./scripts/seed-demo-repo.sh --repo "<owner>/<repo>"
+> # PowerShell: ./scripts/seed-demo-repo.ps1 -Repo "<owner>/<repo>"
+> ```
 
 ---
 

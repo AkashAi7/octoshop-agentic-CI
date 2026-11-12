@@ -14,72 +14,94 @@
 
 ---
 
-## Prerequisites (5 mins)
+## Before You Start (3-Minute Checklist)
 
-1. Pick your target repository:
-   - **Option A**: Fork this **OctoShop** repository (it already includes [`E-Commerce CI`](../.github/workflows/ci.yml) with a one-click `simulate_checkout_bug` input—and a `.devcontainer` if you click **Open in Codespaces**!).
-   - **Option B**: Use one of your own GitHub repositories that already has a GitHub Actions build/test workflow!
-2. Install the `gh-aw` CLI extension (pre-installed in GitHub Codespaces, or run on Linux / macOS / Windows WSL):
+1. **Choose where to work**:
+   - **Option A (Recommended)**: **Fork** this **OctoShop** repo and open it in **GitHub Codespaces** (`Code → Codespaces → Create codespace on main`) or clone locally.
+   - **Option B (Bring Your Own Repo)**: Use any repository you own that already has a GitHub Actions `.yml` workflow.
+2. **Enable GitHub Actions on your fork**:
+   - On GitHub.com, open your fork's **Actions** tab and click **"I understand my workflows, go ahead and enable them"** *(GitHub disables workflows on new forks until clicked)*.
+3. **Set your Copilot secret** (if not already set):
+   - Create a [Fine-Grained PAT](https://github.com/settings/personal-access-tokens/new) with **Account permissions → Copilot Requests: Read-only**, then run:
+     ```bash
+     gh secret set COPILOT_GITHUB_TOKEN
+     ```
+4. **Verify `gh-aw` is installed** *(already pre-installed in Codespaces)*:
    ```bash
-   gh extension install github/gh-aw
    gh aw version
+   # If not installed locally (Linux / macOS / WSL): gh extension install github/gh-aw
    ```
-3. Configure Copilot authentication on your fork/repo (either org `copilot-requests: write` via `gh aw add-wizard`, or a fine-grained PAT with **Copilot Requests: Read** saved as secret `COPILOT_GITHUB_TOKEN`).
 
 ---
 
 ## Path 1: Get Started — Pair an Agentic Workflow with `E-Commerce CI`
 
 ### Step 1 — Copy One Starter into `.github/workflows/`
-Start with **[`ci-failure-explainer.md`](starter-workflows/ci-failure-explainer.md)**, which watches `E-Commerce CI` and opens a plain-English explanation issue whenever cart/checkout tests fail:
+Copy **[`ci-failure-explainer.md`](starter-workflows/ci-failure-explainer.md)**, which watches `E-Commerce CI` and explains checkout/cart test failures in plain English:
 
 ```bash
 cp lab-2/starter-workflows/ci-failure-explainer.md .github/workflows/ci-failure-explainer.md
 ```
-*(Or on PowerShell: `Copy-Item lab-2/starter-workflows/ci-failure-explainer.md .github/workflows/ci-failure-explainer.md`)*
+*(PowerShell: `Copy-Item lab-2/starter-workflows/ci-failure-explainer.md .github/workflows/ci-failure-explainer.md`)*
 
-> **Using your own repo?** Open `.github/workflows/ci-failure-explainer.md` and update `workflows: ["E-Commerce CI"]` and `branches: [main]` under `on.workflow_run` to match your workflow's `name:` and default branch. Also add `.github/workflows/*.lock.yml linguist-generated=true` to `.gitattributes`.
+> **Using your own repo instead of OctoShop?** Open `.github/workflows/ci-failure-explainer.md` and change `workflows: ["E-Commerce CI"]` and `branches: [main]` to match your own workflow's `name:` and default branch, and add `.github/workflows/*.lock.yml linguist-generated=true` to `.gitattributes`.
 
-### Step 2 — Inspect `staged: true` & Customize the Prompt
+### Step 2 — Review `staged: true` & Customize the Prompt
 Open `.github/workflows/ci-failure-explainer.md`:
-- Notice `staged: true` is turned **on** under `safe-outputs:`—your first run is a **100% safe dry-run** that previews the proposed issue inside the GitHub Actions Step Summary without writing any real issues yet.
-- Customize the Markdown instructions if you want the report to highlight specific areas (e.g., promo codes in `src/catalog.mjs` or tax/shipping rules in `src/checkout.mjs`).
+- Notice `staged: true` under `safe-outputs:` — **leave this on for your first run!** It runs a 100% safe dry-run and renders a preview in the GitHub Actions **Step Summary** without creating real issues yet.
+- Optional: Edit the Markdown bullets at the bottom to customize how the report formats **What Broke**, **Customer Impact**, and **Suggested Fix**.
 
 ### Step 3 — Validate, Compile & Push
 ```bash
-# Run OctoShop unit tests & check workflow guardrails locally:
+# 1. Run OctoShop unit tests & check workflow guardrails locally (if in OctoShop)
 npm run verify
 
-# Compile .md -> .lock.yml
+# 2. Compile .md -> .lock.yml (also generates agentics-maintenance.yml for 7d issue expiry)
 gh aw compile ci-failure-explainer
 
-# Commit the .md file, generated .lock.yml, and action pin lockfile
-git add .gitattributes .github/aw/actions-lock.json .github/workflows/ci-failure-explainer.*
+# 3. Commit & push all generated workflow files
+git add .gitattributes .github/aw/ .github/workflows/
 git commit -m "Add OctoShop ci-failure-explainer agentic workflow"
 git push
 ```
 
-### Step 4 — Trigger a Simulated Checkout Bug & Preview (`staged: true`)
-Trigger `E-Commerce CI` with its built-in `simulate_checkout_bug=true` input so it fails on purpose and automatically triggers your `ci-failure-explainer` workflow via `workflow_run`:
+### Step 4 — Trigger a Simulated Checkout Bug & Check the Preview
+Trigger `E-Commerce CI` with `simulate_checkout_bug=true` so it fails on purpose (~10s), which automatically triggers **ci-failure-explainer** via `workflow_run`:
+
 ```bash
+# 1. Trigger a failing E-Commerce CI run on main
 gh workflow run ci.yml -f simulate_checkout_bug=true
+
+# 2. Watch E-Commerce CI fail (~10s), then open Actions -> "ci-failure-explainer"
 gh run watch
 ```
-Open the `ci-failure-explainer` run in your repository's **Actions** tab and check the **Step Summary** to inspect the staged root-cause preview!
+Now open your repository's **Actions** tab on GitHub:
+1. Click the **`ci-failure-explainer`** workflow run that started right after `E-Commerce CI` failed.
+2. Scroll down to the **Step Summary** to read the **Staged Mode Preview** of the root-cause issue!
 
-### Step 5 — Go Live!
-1. Remove `staged: true` from `.github/workflows/ci-failure-explainer.md`.
-2. Ensure the `ci-failure` and `checkout` labels exist in your repo:
+### Step 5 — Flip from Preview to Live Issue Creation!
+1. Open `.github/workflows/ci-failure-explainer.md` and delete the line `staged: true`.
+2. Ensure the `ci-failure` and `checkout` labels exist on your fork:
    ```bash
-   ./scripts/seed-demo-repo.sh --repo "<owner>/<repo>" --labels-only
+   ./scripts/seed-demo-repo.sh --repo "<your-username>/<your-fork>" --labels-only
    ```
-3. Re-compile (`gh aw compile ci-failure-explainer`), commit both `.md` and `.lock.yml`, push, and trigger `gh workflow run ci.yml -f simulate_checkout_bug=true` once more to watch it create a real GitHub Issue!
+3. Re-compile, push, and trigger the simulated checkout failure again:
+   ```bash
+   gh aw compile ci-failure-explainer
+   git add .github/workflows/
+   git commit -m "Enable live issue creation for ci-failure-explainer"
+   git push
+   gh workflow run ci.yml -f simulate_checkout_bug=true
+   ```
+4. Check your **Issues** tab in ~2 minutes to see the newly created `[ci-explainer]` bug report!
+
+> **Try Another Starter**: Want to test PR review or issue triage next? Repeat Steps 1–3 with [`checkout-pr-review.md`](starter-workflows/checkout-pr-review.md) or [`storefront-issue-triage.md`](starter-workflows/storefront-issue-triage.md)!
 
 ---
 
-## Path 2: Build a More Complex Copilot Automation
+## Path 2: Go Deeper — Multi-Step `@copilot` Checkout Automation
 
-Ready to chain **deterministic checkout test telemetry + a custom responder agent + automatic `@copilot` PR creation**?
+Chain **deterministic test capture (0 AI credits) + a custom `.agent.md` responder + automatic `@copilot` draft PR handoff**:
 
 1. Copy both files from [`lab-2/advanced-automation/`](advanced-automation/):
    ```bash
@@ -87,20 +109,20 @@ Ready to chain **deterministic checkout test telemetry + a custom responder agen
    cp lab-2/advanced-automation/checkout-responder.agent.md .github/agents/checkout-responder.agent.md
    cp lab-2/advanced-automation/checkout-auto-handoff.md .github/workflows/checkout-auto-handoff.md
    ```
-2. Open `.github/workflows/checkout-auto-handoff.md` to see how the 3 stages connect:
-   - **Stage 1 (`steps:`)**: Runs `npm test` (or simulates a `SAVE20` promo-code bug via `simulate_failure: true`) into `/tmp/gh-aw/agent/ci-telemetry.txt` at **zero AI credit cost**.
-   - **Stage 2 (`.github/agents/checkout-responder.agent.md`)**: Shared rubric separating safe `copilot-ready` pricing/catalog bugs from `needs-maintainer` payment/workflow changes.
-   - **Stage 3 (`safe-outputs:`)**: Chains `create_issue` → `add_labels` (`copilot-ready`) → `assign_to_agent` (`copilot`) using `"depends-on"` so `@copilot` is only assigned if issue creation succeeds!
-3. Validate, compile, and run:
+2. Open `.github/workflows/checkout-auto-handoff.md` to see the 3 stages:
+   - **Stage 1 (`steps:`)**: Captures `npm test` output (or simulates a `SAVE20` promo bug) into `/tmp/gh-aw/agent/ci-telemetry.txt` at **zero AI credit cost**.
+   - **Stage 2 (`.github/agents/checkout-responder.agent.md`)**: Separates safe `copilot-ready` pricing/catalog bugs from `needs-maintainer` payment/workflow changes.
+   - **Stage 3 (`safe-outputs:`)**: Chains `create_issue` → `add_labels` (`copilot-ready`) → `assign_to_agent` (`copilot`) via `"depends-on"` so `@copilot` is only assigned if issue creation succeeds!
+3. Validate, compile, push, and trigger a dry-run preview:
    ```bash
    npm run verify
    gh aw compile checkout-auto-handoff
-   git add .gitattributes .github/agents/checkout-responder.agent.md .github/workflows/checkout-auto-handoff.*
+   git add .gitattributes .github/agents/ .github/aw/ .github/workflows/
    git commit -m "Add OctoShop checkout auto-handoff automation"
    git push
    gh aw run checkout-auto-handoff -f simulate_failure=true
    ```
-4. Once you inspect the Step Summary preview, remove `staged: true`, provision labels (`./scripts/seed-demo-repo.sh --repo "<owner>/<repo>" --labels-only`), recompile, and watch `@copilot` open a draft PR to fix the checkout bug!
+4. Inspect the **Step Summary** preview in the **Actions** tab. To run live, remove `staged: true`, ensure labels exist (`./scripts/seed-demo-repo.sh --repo "<your-username>/<your-fork>" --labels-only`), re-run `gh aw compile checkout-auto-handoff`, push, and watch `@copilot` pick up the issue to draft a fix PR!
 
 ---
 
