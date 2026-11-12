@@ -50,3 +50,12 @@ test('blocks checkout when an item is out of stock or exceeds available inventor
 		/Only 3 left in stock/i
 	);
 });
+
+test('applies FLASH15 weekend promo code on orders of $40.00+', () => {
+	const summary = calculateCartSummary([{ productId: 'mat-desk-xl', quantity: 1 }], {
+		promoCode: 'FLASH15',
+	});
+
+	assert.equal(summary.appliedPromo, 'FLASH15');
+	assert.equal(summary.discountCents, 660);
+});

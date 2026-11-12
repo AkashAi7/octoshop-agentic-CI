@@ -90,6 +90,13 @@ export const PROMO_CODES = Object.freeze({
 		minSubtotalCents: 0,
 		description: 'Free standard shipping on any order',
 	},
+	FLASH15: {
+		code: 'FLASH15',
+		type: 'percent',
+		percentOff: 15,
+		minSubtotalCents: 4000,
+		description: '15% off weekend flash-sale orders of $40.00 or more',
+	},
 });
 
 export function getProductById(productId) {
